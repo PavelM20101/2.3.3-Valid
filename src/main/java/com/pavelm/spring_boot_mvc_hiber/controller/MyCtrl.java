@@ -2,9 +2,11 @@ package com.pavelm.spring_boot_mvc_hiber.controller;
 
 import com.pavelm.spring_boot_mvc_hiber.entity.User;
 import com.pavelm.spring_boot_mvc_hiber.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,9 +34,13 @@ public class MyCtrl {
     }
 
     @PostMapping("/saveUser")
-    public String saveUser(@ModelAttribute("user") User user) {
-        userService.createOrUpdateUser(user);
-        return "redirect:/users";
+    public String saveUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()){
+            return "user-info";
+        } else {
+            userService.createOrUpdateUser(user);
+            return "redirect:/users";
+        }
     }
 
     @GetMapping("/updateUser")
